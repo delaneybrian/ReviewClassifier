@@ -30,9 +30,13 @@ def scrape_reviews_for_location_link(location_link):
     content = get_page(location_link)
     soup = BeautifulSoup(content, features='html.parser')
 
+    all_reviews = []
     reviews = soup.find_all('div', 'review')
     for review in reviews:
-        extract_review_data(review)
+        review_data = extract_review_data(review)
+        all_reviews.append(review_data)
+
+    return all_reviews
 
 def extract_review_data(review_soup):
     review_text = review_soup.find('p', 'text').getText()
@@ -41,7 +45,7 @@ def extract_review_data(review_soup):
     review_score = extract_review_score_from_image(review_score_img)
     review_class = num_stars_to_postive_or_negative(review_score)
 
-    print(review_class, review_text)
+    return(review_class, review_text)
 
 def extract_review_score_from_image(review_score_img):
     return re.findall(r'stars-([0-9]).png', review_score_img['src'])[0]
@@ -59,5 +63,10 @@ content = get_page(start_page)
 soup = BeautifulSoup(content, features='html.parser')
 location_links = scrape_location_links(soup)
 
+all_review_for_type = []
 for location_link in location_links:
-    scrape_reviews_for_location_link(location_link)
+    all_review_data_for_location = scrape_reviews_for_location_link(location_link)
+    for review_data in all_review_data_for_location:
+        all_review_for_type.append(review_data)
+
+print(all_review_for_type)
