@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+from cleaner import clean_text, setup_clean
 
 start_page = "http://mlg.ucd.ie/modules/yalp/bars_list.html"
 base_address = "http://mlg.ucd.ie/modules/yalp/"
@@ -45,7 +46,7 @@ def extract_review_data(review_soup):
     review_score = extract_review_score_from_image(review_score_img)
     review_class = num_stars_to_postive_or_negative(review_score)
 
-    return(review_class, review_text)
+    return {"review_class" : review_class, "review_text" : review_text}
 
 def extract_review_score_from_image(review_score_img):
     return re.findall(r'stars-([0-9]).png', review_score_img['src'])[0]
@@ -59,14 +60,20 @@ def num_stars_to_postive_or_negative(num_stars):
     else:
         raise Exception("Invalid Review Rating")
 
-content = get_page(start_page)
-soup = BeautifulSoup(content, features='html.parser')
-location_links = scrape_location_links(soup)
 
-all_review_for_type = []
-for location_link in location_links:
-    all_review_data_for_location = scrape_reviews_for_location_link(location_link)
-    for review_data in all_review_data_for_location:
-        all_review_for_type.append(review_data)
+def get_and_clean_review_data():
+    setup_clean()
+    content = get_page(start_page)
+    soup = BeautifulSoup(content, features='html.parser')
+    location_links = scrape_location_links(soup)
 
-print(all_review_for_type)
+    all_review_for_type = []
+    for location_link in location_links:
+        all_review_data_for_location = scrape_reviews_for_location_link(location_link)
+        for review_data in all_review_data_for_location:
+            cleaned_review_text = clean_text(review_data["review_text"])
+            all_review_for_type.append({"review_class" : review_data["review_class"], "review_text": cleaned_review_text})
+
+    print(all_review_for_type)
+
+get_and_clean_review_data()
