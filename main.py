@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from cleaner import clean_text, setup_clean
+from numerizer import create_tfidf_representation
 
 start_page = "http://mlg.ucd.ie/modules/yalp/bars_list.html"
 base_address = "http://mlg.ucd.ie/modules/yalp/"
@@ -74,6 +75,6 @@ def get_and_clean_review_data():
             cleaned_review_text = clean_text(review_data["review_text"])
             all_review_for_type.append({"review_class" : review_data["review_class"], "review_text": cleaned_review_text})
 
-    print(all_review_for_type)
+    create_tfidf_representation(all_review_for_type)
 
 get_and_clean_review_data()
