@@ -1,7 +1,6 @@
 import nltk
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
-import numpy as np
 
 def setup_clean():
     nltk.download('punkt')

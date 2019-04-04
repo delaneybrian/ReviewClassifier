@@ -28,6 +28,3 @@ def create_tfidf_representation(cleaned_data_list):
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
     print(accuracy_score(y_test, y_pred))
-
-def dummy_fun(doc):
-    return doc
